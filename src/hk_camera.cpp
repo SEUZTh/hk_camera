@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     camera::Camera MVS_cap(*hk_camera);
     //********** rosnode init **********/
     image_transport::ImageTransport main_cam_image(hk_camera);
-    image_transport::CameraPublisher image_pub = main_cam_image.advertiseCamera("/hk_camera/rgb/compressed", 1000);
+    image_transport::CameraPublisher image_pub = main_cam_image.advertiseCamera("/hk_camera/rgb", 1000);
 
     sensor_msgs::msg::Image image_msg;
     sensor_msgs::msg::CameraInfo camera_info_msg;
