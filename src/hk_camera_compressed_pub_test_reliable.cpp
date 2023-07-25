@@ -31,8 +31,17 @@ int main(int argc, char **argv)
     auto hk_camera = std::make_shared<rclcpp::Node>("hk_camera");
     camera::Camera MVS_cap(*hk_camera);
     //********** rosnode init **********/
-    auto image_pub = hk_camera->create_publisher<sensor_msgs::msg::CompressedImage>("/hk_camera/rgb/compressed", 1); // 将队列长度设置为1
-    auto string_pub = hk_camera->create_publisher<std_msgs::msg::String>("/hk_camera/strings", 1); // New publisher for string message
+
+    // Set QoS profile with reliability set to "reliable" for both publishers
+    rclcpp::QoS qos_profile_realtime(10); // Higher rate, adjust this value based on your requirements
+    qos_profile_realtime.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT); // Reliable delivery
+    // qos_profile_realtime.durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL); // Reduce message backlog
+
+    auto image_pub = hk_camera->create_publisher<sensor_msgs::msg::CompressedImage>(
+        "/hk_camera/rgb/compressed", qos_profile_realtime); // Use the custom QoS profile for reliable image publishing
+
+    auto string_pub = hk_camera->create_publisher<std_msgs::msg::String>(
+        "/hk_camera/strings", qos_profile_realtime); // Use the custom QoS profile for reliable string publishing
 
     sensor_msgs::msg::CompressedImage compressed_image_msg;
     sensor_msgs::msg::CameraInfo camera_info_msg;
@@ -40,7 +49,7 @@ int main(int argc, char **argv)
     cv_ptr->encoding = sensor_msgs::image_encodings::BGR8; // 就是rgb格式
 
     //********** 10 Hz        **********/
-    rclcpp::Rate loop_rate(30);
+    rclcpp::Rate loop_rate(10);
 
     rclcpp::Time last_time = hk_camera->now(); // 记录循环开始时间
 

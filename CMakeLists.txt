@@ -107,6 +107,23 @@ target_link_libraries(hk_camera_compressed_pub_test
   X11
 )
 
+add_executable(hk_camera_compressed_pub_test_reliable src/hk_camera_compressed_pub_test_reliable.cpp)
+ament_target_dependencies(hk_camera_compressed_pub_test_reliable
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed_pub_test_reliable
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
+  X11
+)
+
 # 用于测试订阅压缩图像
 add_executable(hk_camera_compressed_sub_test src/hk_camera_compressed_sub_test.cpp)
 ament_target_dependencies(hk_camera_compressed_sub_test
@@ -125,12 +142,31 @@ target_link_libraries(hk_camera_compressed_sub_test
   X11
 )
 
+add_executable(hk_camera_compressed_sub_test_reliable src/hk_camera_compressed_sub_test_reliable.cpp)
+ament_target_dependencies(hk_camera_compressed_sub_test_reliable
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed_sub_test_reliable
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
+  X11
+)
+
 install(TARGETS
   hk_camera
   hk_camera_compressed_pub
   hk_camera_compressed_sub
   hk_camera_compressed_pub_test
   hk_camera_compressed_sub_test
+  hk_camera_compressed_pub_test_reliable
+  hk_camera_compressed_sub_test_reliable
   DESTINATION lib/${PROJECT_NAME}
 )
 
