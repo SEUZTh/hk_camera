@@ -34,7 +34,9 @@ void imageCallback(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
         std::stringstream ss;
         ss << "Frame Rate: " << frame_rate << " fps";
         cv::putText(image, ss.str(), cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
-
+        // 打印图像分辨率
+        std::cout << "Image resolution: " << image.cols << "x" << image.rows << std::endl;
+        
         // 使用OpenCV窗口显示图像
         cv::imshow("Received Image", image);
         cv::waitKey(1);
@@ -60,9 +62,9 @@ int main(int argc, char** argv)
     auto node = rclcpp::Node::make_shared("image_subscriber");
 
     // Set QoS profile with reliability set to "reliable" for both subscribers
-    rclcpp::QoS qos_profile_realtime(10); // Higher rate, adjust this value based on your requirements
-    qos_profile_realtime.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT); // Reliable delivery
-    // qos_profile_realtime.durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL); // Reduce message backlog
+    rclcpp::QoS qos_profile_realtime(30); // Higher rate, adjust this value based on your requirements
+    qos_profile_realtime.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE); // Reliable delivery
+    qos_profile_realtime.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE); // Reduce message backlog
     // 创建图像消息的订阅者，订阅话题为"/hk_camera/rgb/compressed"，使用可靠的QoS
     auto image_subscriber = node->create_subscription<sensor_msgs::msg::CompressedImage>(
         "/hk_camera/rgb/compressed",
