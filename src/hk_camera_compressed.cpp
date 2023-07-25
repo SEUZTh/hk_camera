@@ -44,7 +44,6 @@ int main(int argc, char **argv)
 
     while (rclcpp::ok())
     {
-
         loop_rate.sleep();
         rclcpp::spin_some(hk_camera);
 
@@ -53,6 +52,7 @@ int main(int argc, char **argv)
         {
             continue;
         }
+        
 #if FIT_LIDAR_CUT_IMAGE
         cv::Rect area(FIT_min_x, FIT_min_y, FIT_max_x - FIT_min_x, FIT_max_y - FIT_min_y); // cut区域：从左上角像素坐标x，y，宽，高
         cv::Mat src_new = src(area);
@@ -68,9 +68,9 @@ int main(int argc, char **argv)
 
         rclcpp::Time current_time = hk_camera->now();              // 记录当前时间
         rclcpp::Duration loop_duration = current_time - last_time; // 计算循环耗时
-        last_time = current_time;                                  // 更新循环开始时间
         // 输出循环耗时
         RCLCPP_INFO(hk_camera->get_logger(), "Loop duration: %f seconds", loop_duration.seconds());
+        last_time = current_time;                                  // 更新循环开始时间
     }
     rclcpp::shutdown();
 

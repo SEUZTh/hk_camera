@@ -70,9 +70,9 @@ int main(int argc, char **argv)
 
         rclcpp::Time current_time = hk_camera->now();              // 记录当前时间
         rclcpp::Duration loop_duration = current_time - last_time; // 计算循环耗时
-        last_time = current_time;                                  // 更新循环开始时间
         // 输出循环耗时
         RCLCPP_INFO(hk_camera->get_logger(), "Loop duration: %f seconds", loop_duration.seconds());
+        last_time = current_time;                                  // 更新循环开始时间
     }
     rclcpp::shutdown();
 

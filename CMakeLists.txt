@@ -15,6 +15,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# 开启编译优化
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -82,13 +86,34 @@ target_link_libraries(hk_camera_compressed
   X11
 )
 
-install(TARGETS
-  hk_camera
-  DESTINATION lib/${PROJECT_NAME}
+add_executable(hk_camera_compressed_sub src/hk_camera_compressed_sub.cpp)
+ament_target_dependencies(hk_camera_compressed_sub
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed_sub
+  ${OpenCV_LIBRARIES}
+  # GCBase_gcc421_v3_0
+  MvCameraControl
+  # GenApi_gcc421_v3_0
+  MVGigEVisionSDK
+  # log4cpp_gcc421_v3_0
+  MVRender
+  # Log_gcc421_v3_0
+  MvUsb3vTL
+  # MathParser_gcc421_v3_0
+  # NodeMapData_gcc421_v3_0
+  MediaProcess
+  # XmlParser_gcc421_v3_0
+  X11
 )
 
 install(TARGETS
+  hk_camera
   hk_camera_compressed
+  hk_camera_compressed_sub
   DESTINATION lib/${PROJECT_NAME}
 )
 
