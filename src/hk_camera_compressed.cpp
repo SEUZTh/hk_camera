@@ -3,6 +3,7 @@
 #include <vector>
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
+#include "sensor_msgs/msg/compressed_image.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
@@ -29,10 +30,9 @@ int main(int argc, char **argv)
     auto hk_camera = std::make_shared<rclcpp::Node>("hk_camera");
     camera::Camera MVS_cap(*hk_camera);
     //********** rosnode init **********/
-    image_transport::ImageTransport main_cam_image(hk_camera);
-    image_transport::CameraPublisher image_pub = main_cam_image.advertiseCamera("/hk_camera/rgb", 1);
-    
-    sensor_msgs::msg::Image image_msg;
+    auto image_pub = hk_camera->create_publisher<sensor_msgs::msg::CompressedImage>("/hk_camera/rgb/compressed", 1); // 将队列长度设置为1
+
+    sensor_msgs::msg::CompressedImage compressed_image_msg;
     sensor_msgs::msg::CameraInfo camera_info_msg;
     cv_bridge::CvImagePtr cv_ptr = std::make_shared<cv_bridge::CvImage>();
     cv_ptr->encoding = sensor_msgs::image_encodings::BGR8; // 就是rgb格式
@@ -61,12 +61,10 @@ int main(int argc, char **argv)
         cv_ptr->image = src;
 #endif
 
-        image_msg = *(cv_ptr->toImageMsg());
-        image_msg.header.stamp = hk_camera->get_clock()->now(); // ros发出的时间不是快门时间
-        image_msg.header.frame_id = "hk_camera";
-        camera_info_msg.header.frame_id = image_msg.header.frame_id;
-        camera_info_msg.header.stamp = image_msg.header.stamp;
-        image_pub.publish(image_msg, camera_info_msg);    
+        compressed_image_msg = *(cv_ptr->toCompressedImageMsg());          // 使用toCompressedImageMsg()函数生成压缩图像消息
+        compressed_image_msg.header.stamp = hk_camera->get_clock()->now(); // ros发出的时间不是快门时间
+        compressed_image_msg.header.frame_id = "hk_camera";
+        image_pub->publish(compressed_image_msg); // 使用正确的压缩图像消息类型发布
 
         rclcpp::Time current_time = hk_camera->now();              // 记录当前时间
         rclcpp::Duration loop_duration = current_time - last_time; // 计算循环耗时

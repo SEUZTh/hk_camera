@@ -41,8 +41,31 @@ ament_target_dependencies(${PROJECT_NAME}
   cv_bridge
   image_transport
 )
-
 target_link_libraries(${PROJECT_NAME}
+  ${OpenCV_LIBRARIES}
+  # GCBase_gcc421_v3_0
+  MvCameraControl
+  # GenApi_gcc421_v3_0
+  MVGigEVisionSDK
+  # log4cpp_gcc421_v3_0
+  MVRender
+  # Log_gcc421_v3_0
+  MvUsb3vTL
+  # MathParser_gcc421_v3_0
+  # NodeMapData_gcc421_v3_0
+  MediaProcess
+  # XmlParser_gcc421_v3_0
+  X11
+)
+
+add_executable(hk_camera_compressed src/hk_camera_compressed.cpp)
+ament_target_dependencies(hk_camera_compressed
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed
   ${OpenCV_LIBRARIES}
   # GCBase_gcc421_v3_0
   MvCameraControl
@@ -63,6 +86,12 @@ install(TARGETS
   hk_camera
   DESTINATION lib/${PROJECT_NAME}
 )
+
+install(TARGETS
+  hk_camera_compressed
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

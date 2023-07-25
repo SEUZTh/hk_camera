@@ -94,10 +94,10 @@ namespace camera
         handle = NULL;
 
         //********** 读取待设置的摄像头参数 第三个参数是默认值 yaml文件未给出该值时生效 ********************************/
-        node.get_parameter_or("width", width, 3072);
-        node.get_parameter_or("height", height, 2048);
-        node.get_parameter_or("FrameRateEnable", FrameRateEnable, false);
-        node.get_parameter_or("FrameRate", FrameRate, 10);
+        node.get_parameter_or("width", width, 1920);
+        node.get_parameter_or("height", height, 1200);
+        node.get_parameter_or("FrameRateEnable", FrameRateEnable, true);
+        node.get_parameter_or("FrameRate", FrameRate, 30);
         node.get_parameter_or("BurstFrameCount", BurstFrameCount, 10); // 一次触发采集的次数
         node.get_parameter_or("ExposureTime", ExposureTime, 50000);
         node.get_parameter_or("GammaEnable", GammaEnable, false);
@@ -683,8 +683,8 @@ namespace camera
             image_empty_count = 0; //空图帧数
             //转换图像格式为BGR8
 
-            stConvertParam.nWidth = 3072;                               //ch:图像宽 | en:image width
-            stConvertParam.nHeight = 2048;                              //ch:图像高 | en:image height
+            stConvertParam.nWidth = 1920;                               //ch:图像宽 | en:image width
+            stConvertParam.nHeight = 1200;                              //ch:图像高 | en:image height
             stConvertParam.pSrcData = m_pBufForDriver;                  //ch:输入数据缓存 | en:input data buffer
             stConvertParam.nSrcDataLen = MAX_IMAGE_DATA_SIZE;           //ch:输入数据大小 | en:input data size
             stConvertParam.enDstPixelType = PixelType_Gvsp_BGR8_Packed; //ch:输出像素格式 | en:output pixel format                      //! 输出格式 RGB
@@ -698,9 +698,9 @@ namespace camera
             pthread_mutex_unlock(&mutex);
             double time = ((double)cv::getTickCount() - start) / cv::getTickFrequency();
             //*************************************testing img********************************//
-            //std::cout << "HK_camera,Time:" << time << "\tFPS:" << 1 / time << std::endl;
-            //imshow("HK vision",frame);
-            //waitKey(1);
+            std::cout << "HK_camera,Time: " << time  << "s, " << "\tFPS: " << 1 / time << "\twidth: " << frame.cols << "\theight: " << frame.rows << std::endl;
+            // imshow("HK vision",frame);
+            // cv::waitKey(1);
         }
         free(m_pBufForDriver);
         free(m_pBufForSaveImage);
