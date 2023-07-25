@@ -1,6 +1,7 @@
 #include <iostream>
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/compressed_image.hpp"
+#include "std_msgs/msg/string.hpp" // Include the string message header
 #include <cv_bridge/cv_bridge.h>
 #include "opencv2/opencv.hpp"
 
@@ -45,16 +46,31 @@ void imageCallback(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
     }
 }
 
+// 回调函数定义，处理接收到的字符串消息
+void stringCallback(const std_msgs::msg::String::SharedPtr msg)
+{
+    // 获取收到的字符串消息内容并打印
+    std::string message = msg->data;
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("string_subscriber"), "Received string message: " << message);
+}
+
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
     auto node = rclcpp::Node::make_shared("image_subscriber");
 
     // 创建图像消息的订阅者，订阅话题为"/hk_camera/rgb/compressed"
-    auto subscriber = node->create_subscription<sensor_msgs::msg::CompressedImage>(
+    auto image_subscriber = node->create_subscription<sensor_msgs::msg::CompressedImage>(
         "/hk_camera/rgb/compressed",
         1,
-        imageCallback // 回调函数处理接收到的消息
+        imageCallback // 回调函数处理接收到的图像消息
+    );
+
+    // 创建字符串消息的订阅者，订阅话题为"/hk_camera/strings"
+    auto string_subscriber = node->create_subscription<std_msgs::msg::String>(
+        "/hk_camera/strings",
+        1,
+        stringCallback // 回调函数处理接收到的字符串消息
     );
 
     // 初始化OpenCV窗口

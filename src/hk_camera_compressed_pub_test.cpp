@@ -5,6 +5,7 @@
 #include "sensor_msgs/msg/image.hpp"
 #include "sensor_msgs/msg/compressed_image.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
+#include "std_msgs/msg/string.hpp" // Include the string message header
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
 #include "hk_camera.hpp"
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
     camera::Camera MVS_cap(*hk_camera);
     //********** rosnode init **********/
     auto image_pub = hk_camera->create_publisher<sensor_msgs::msg::CompressedImage>("/hk_camera/rgb/compressed", 1); // 将队列长度设置为1
+    auto string_pub = hk_camera->create_publisher<std_msgs::msg::String>("/hk_camera/strings", 1); // New publisher for string message
 
     sensor_msgs::msg::CompressedImage compressed_image_msg;
     sensor_msgs::msg::CameraInfo camera_info_msg;
@@ -42,6 +44,8 @@ int main(int argc, char **argv)
 
     rclcpp::Time last_time = hk_camera->now(); // 记录循环开始时间
 
+    int count = 0; // Counter variable
+
     while (rclcpp::ok())
     {
         loop_rate.sleep();
@@ -52,7 +56,7 @@ int main(int argc, char **argv)
         {
             continue;
         }
-        
+
 #if FIT_LIDAR_CUT_IMAGE
         cv::Rect area(FIT_min_x, FIT_min_y, FIT_max_x - FIT_min_x, FIT_max_y - FIT_min_y); // cut区域：从左上角像素坐标x，y，宽，高
         cv::Mat src_new = src(area);
@@ -66,12 +70,20 @@ int main(int argc, char **argv)
         compressed_image_msg.header.frame_id = "hk_camera";
         image_pub->publish(compressed_image_msg); // 使用正确的压缩图像消息类型发布
 
+        // New string message with counting variable
+        std_msgs::msg::String string_msg;
+        string_msg.data = "This is a string message! Count: " + std::to_string(count);
+        string_pub->publish(string_msg);
+
+        count++; // Increment the counter variable
+
         rclcpp::Time current_time = hk_camera->now();              // 记录当前时间
         rclcpp::Duration loop_duration = current_time - last_time; // 计算循环耗时
         // 输出循环耗时
         RCLCPP_INFO(hk_camera->get_logger(), "Loop duration: %f seconds", loop_duration.seconds());
         last_time = current_time;                                  // 更新循环开始时间
     }
+
     rclcpp::shutdown();
 
     return 0;

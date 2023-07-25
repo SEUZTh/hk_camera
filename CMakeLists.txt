@@ -47,42 +47,28 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBRARIES}
-  # GCBase_gcc421_v3_0
   MvCameraControl
-  # GenApi_gcc421_v3_0
   MVGigEVisionSDK
-  # log4cpp_gcc421_v3_0
   MVRender
-  # Log_gcc421_v3_0
   MvUsb3vTL
-  # MathParser_gcc421_v3_0
-  # NodeMapData_gcc421_v3_0
   MediaProcess
-  # XmlParser_gcc421_v3_0
   X11
 )
 
-add_executable(hk_camera_compressed src/hk_camera_compressed.cpp)
-ament_target_dependencies(hk_camera_compressed
+add_executable(hk_camera_compressed_pub src/hk_camera_compressed_pub.cpp)
+ament_target_dependencies(hk_camera_compressed_pub
   rclcpp
   std_msgs
   cv_bridge
   image_transport
 )
-target_link_libraries(hk_camera_compressed
+target_link_libraries(hk_camera_compressed_pub
   ${OpenCV_LIBRARIES}
-  # GCBase_gcc421_v3_0
   MvCameraControl
-  # GenApi_gcc421_v3_0
   MVGigEVisionSDK
-  # log4cpp_gcc421_v3_0
   MVRender
-  # Log_gcc421_v3_0
   MvUsb3vTL
-  # MathParser_gcc421_v3_0
-  # NodeMapData_gcc421_v3_0
   MediaProcess
-  # XmlParser_gcc421_v3_0
   X11
 )
 
@@ -95,25 +81,56 @@ ament_target_dependencies(hk_camera_compressed_sub
 )
 target_link_libraries(hk_camera_compressed_sub
   ${OpenCV_LIBRARIES}
-  # GCBase_gcc421_v3_0
   MvCameraControl
-  # GenApi_gcc421_v3_0
   MVGigEVisionSDK
-  # log4cpp_gcc421_v3_0
   MVRender
-  # Log_gcc421_v3_0
   MvUsb3vTL
-  # MathParser_gcc421_v3_0
-  # NodeMapData_gcc421_v3_0
   MediaProcess
-  # XmlParser_gcc421_v3_0
+  X11
+)
+
+# 用于测试发布压缩图像
+add_executable(hk_camera_compressed_pub_test src/hk_camera_compressed_pub_test.cpp)
+ament_target_dependencies(hk_camera_compressed_pub_test
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed_pub_test
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
+  X11
+)
+
+# 用于测试订阅压缩图像
+add_executable(hk_camera_compressed_sub_test src/hk_camera_compressed_sub_test.cpp)
+ament_target_dependencies(hk_camera_compressed_sub_test
+  rclcpp
+  std_msgs
+  cv_bridge
+  image_transport
+)
+target_link_libraries(hk_camera_compressed_sub_test
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
   X11
 )
 
 install(TARGETS
   hk_camera
-  hk_camera_compressed
+  hk_camera_compressed_pub
   hk_camera_compressed_sub
+  hk_camera_compressed_pub_test
+  hk_camera_compressed_sub_test
   DESTINATION lib/${PROJECT_NAME}
 )
 
