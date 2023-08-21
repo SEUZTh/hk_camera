@@ -73,11 +73,11 @@ int main(int argc, char** argv)
     );
 
     // 创建字符串消息的订阅者，订阅话题为"/hk_camera/strings"，使用可靠的QoS
-    auto string_subscriber = node->create_subscription<std_msgs::msg::String>(
-        "/hk_camera/strings",
-        qos_profile_realtime, // Use the custom QoS profile for reliable string subscription
-        stringCallback        // 回调函数处理接收到的字符串消息
-    );
+    // auto string_subscriber = node->create_subscription<std_msgs::msg::String>(
+    //     "/hk_camera/strings",
+    //     qos_profile_realtime, // Use the custom QoS profile for reliable string subscription
+    //     stringCallback        // 回调函数处理接收到的字符串消息
+    // );
 
     // 初始化OpenCV窗口
     cv::namedWindow("Received Image", cv::WINDOW_NORMAL);
