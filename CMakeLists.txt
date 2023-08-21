@@ -25,8 +25,8 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
-
 find_package(OpenCV 4.2.0 REQUIRED)
+find_package(hk_camera_interfaces REQUIRED) # 添加自定义消息和服务
 
 include_directories(
   ${OpenCV_INCLUDE_DIRS}
@@ -159,6 +159,42 @@ target_link_libraries(hk_camera_compressed_sub_test_reliable
   X11
 )
 
+# 服务端
+add_executable(hk_camera_server src/hk_camera_server.cpp)
+ament_target_dependencies(hk_camera_server
+  rclcpp
+  std_msgs
+  hk_camera_interfaces
+)
+
+target_link_libraries(hk_camera_server
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
+  X11
+)
+
+# 客户端
+add_executable(hk_camera_client src/hk_camera_client.cpp)
+ament_target_dependencies(hk_camera_client
+  rclcpp
+  std_msgs
+  hk_camera_interfaces
+)
+
+target_link_libraries(hk_camera_client
+  ${OpenCV_LIBRARIES}
+  MvCameraControl
+  MVGigEVisionSDK
+  MVRender
+  MvUsb3vTL
+  MediaProcess
+  X11
+)
+
 install(TARGETS
   hk_camera
   hk_camera_compressed_pub
@@ -167,6 +203,10 @@ install(TARGETS
   hk_camera_compressed_sub_test
   hk_camera_compressed_pub_test_reliable
   hk_camera_compressed_sub_test_reliable
+
+  hk_camera_server
+  hk_camera_client
+  
   DESTINATION lib/${PROJECT_NAME}
 )
 

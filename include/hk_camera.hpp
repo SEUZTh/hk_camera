@@ -120,10 +120,9 @@ namespace camera
             printf("MV_CC_EnumDevices fail! nRet [%x]\n", nRet);
             exit(-1);
         }
-        unsigned int nIndex = 0;
         if (stDeviceList.nDeviceNum > 0)
         {
-            for (int i = 0; i < stDeviceList.nDeviceNum; i++)
+            for (unsigned int i = 0; i < stDeviceList.nDeviceNum; i++)
             {
                 printf("[device %d]:\n", i);
                 MV_CC_DEVICE_INFO *pDeviceInfo = stDeviceList.pDeviceInfo[i];
